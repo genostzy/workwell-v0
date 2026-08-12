@@ -15,7 +15,7 @@ export default async function Home() {
 
   const { data: me, error: meError } = await supabase
     .from('me')
-    .select('full_name')
+    .select('full_name, plane')
     .maybeSingle()
 
   // A query that FAILED and a query that found nothing are different
@@ -51,6 +51,30 @@ export default async function Home() {
           lead="An account is not access yet. Ask, and whoever runs WorkWell where you work decides."
         />
         <RequestAccess />
+      </Shell>
+    )
+  }
+
+  if (!me.plane) {
+    return (
+      <Shell current="home">
+        <PageHead
+          title="Awaiting assignment"
+          lead="An admin will assign your plane shortly. You'll receive access once assigned."
+        />
+        <div className="card">
+          <div className="state state--info">
+            <div className="state__icon" aria-hidden="true">
+              ⏳
+            </div>
+            <h2 className="state__title">Waiting for admin</h2>
+            <p className="state__text">
+              You are signed in, but an admin needs to assign you to either
+              the Private plane (employee) or HR plane before you can continue.
+              This usually happens within a day.
+            </p>
+          </div>
+        </div>
       </Shell>
     )
   }

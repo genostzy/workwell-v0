@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import Link from 'next/link'
 import { PageHead, PlaneBadge, PrivacyNote, Shell } from '@/components/chrome'
 import { Decide } from './decide'
 import { AccessRequests } from './requests'
@@ -92,6 +93,10 @@ export default async function Hr() {
           <span className="stat__value t-num">0</span>
         </div>
       </div>
+
+      <Link href="/hr/accounts" className="btn btn--secondary mb-5">
+        Manage accounts
+      </Link>
 
       <div className="card">
         <div className="card__head">

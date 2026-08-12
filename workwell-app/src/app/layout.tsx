@@ -23,7 +23,7 @@ const nunito = Nunito({
 })
 
 export const metadata: Metadata = {
-  title: 'WorkWell',
+  title: 'WorkWell — by AxionHR',
   description:
     'Employee wellbeing, with the boundary between you and your employer enforced in the database.',
 }

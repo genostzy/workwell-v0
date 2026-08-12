@@ -179,3 +179,31 @@ body.has-sky .app { position: relative; z-index: 1; }
 @media (max-width: 860px) {
   .room__svg { max-height: 74%; }
 }
+
+.auth__tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: var(--s-4);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.auth__tab {
+  flex: 1;
+  padding: 10px 16px;
+  border: none;
+  background: transparent;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: background 0.15s, color 0.15s;
+}
+.auth__tab.is-active {
+  background: var(--accent);
+  color: var(--text-on-accent);
+}
+.auth__tab:not(.is-active):hover {
+  background: var(--surface-hover, rgba(0,0,0,0.04));
+}
