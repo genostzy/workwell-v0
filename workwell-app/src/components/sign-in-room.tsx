@@ -20,6 +20,7 @@ import { Brandmark } from '@/components/brandmark'
  */
 
 type Step = 'ask' | 'sending' | 'sent'
+type AuthMode = 'login' | 'signup'
 
 const REMEMBER = 'ww.email'
 const RESEND_SECONDS = 45
@@ -53,6 +54,7 @@ export function SignInRoom({
   const [view, setView] = useState<'room' | 'list'>('room')
   const [open, setOpen] = useState(openOnLoad)
   const [step, setStep] = useState<Step>('ask')
+  const [mode, setMode] = useState<AuthMode>('login')
   const [email, setEmail] = useState('')
   const [error, setError] = useState<string | null>(notice ?? null)
   const [cooldown, setCooldown] = useState(0)
@@ -173,6 +175,13 @@ export function SignInRoom({
         return
       }
 
+      if (mode === 'signup') {
+        await supabase.from('access_requests').insert({
+          email: clean,
+          status: 'pending',
+        })
+      }
+
       try {
         localStorage.setItem(REMEMBER, clean)
       } catch {
@@ -182,7 +191,7 @@ export function SignInRoom({
       setCooldown(RESEND_SECONDS)
       setStep('sent')
     },
-    []
+    [mode]
   )
 
   /* ------------------------------------------------------------- Wiring */
@@ -223,7 +232,7 @@ export function SignInRoom({
       <div className={`room-shell${view === 'room' ? ' is-fit' : ''}`}>
         <header className="room-top">
           <div className="room-top__brand">
-            <Brandmark size={30} />
+            <Brandmark size={30} showAttribution />
             <span className="room-top__name">WorkWell</span>
           </div>
           <span className="room-top__spacer" />
@@ -309,9 +318,34 @@ export function SignInRoom({
             <div className="auth__card" style={{ padding: 'var(--s-6)' }}>
               {step === 'ask' && (
                 <>
-                  <h2 className="auth__title">Come in</h2>
+                  <div className="auth__tabs" role="tablist">
+                    <button
+                      type="button"
+                      role="tab"
+                      aria-selected={mode === 'login'}
+                      className={`auth__tab${mode === 'login' ? ' is-active' : ''}`}
+                      onClick={() => setMode('login')}
+                    >
+                      Log in
+                    </button>
+                    <button
+                      type="button"
+                      role="tab"
+                      aria-selected={mode === 'signup'}
+                      className={`auth__tab${mode === 'signup' ? ' is-active' : ''}`}
+                      onClick={() => setMode('signup')}
+                    >
+                      Sign up
+                    </button>
+                  </div>
+
+                  <h2 className="auth__title">
+                    {mode === 'login' ? 'Come in' : 'Create your account'}
+                  </h2>
                   <p className="auth__sub">
-                    We email you a link. No password to remember, none to leak.
+                    {mode === 'login'
+                      ? 'We email you a link. No password to remember, none to leak.'
+                      : "We'll email you a verification link. An admin will approve your access."}
                   </p>
 
                   {error && (
@@ -350,7 +384,7 @@ export function SignInRoom({
                       className="btn btn--primary btn--block mt-4"
                       type="submit"
                     >
-                      Send me a link
+                      {mode === 'login' ? 'Send me a link' : 'Request access'}
                     </button>
                   </form>
 

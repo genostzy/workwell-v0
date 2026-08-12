@@ -44,6 +44,21 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
+  // Admin routes require admin role
+  if (data && path.startsWith('/admin')) {
+    const { data: roles } = await supabase
+      .from('person_roles')
+      .select('role')
+      .eq('person_id', (await supabase.from('me').select('id').maybeSingle()).data?.id)
+
+    const isAdmin = (roles ?? []).some((r: { role: string }) => r.role === 'admin')
+    if (!isAdmin) {
+      const url = request.nextUrl.clone()
+      url.pathname = '/'
+      return NextResponse.redirect(url)
+    }
+  }
+
   return response
 }
 
